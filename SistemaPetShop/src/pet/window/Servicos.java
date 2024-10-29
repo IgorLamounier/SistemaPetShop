@@ -110,6 +110,11 @@ public class Servicos extends JFrame {
         contentPane.add(btnConcluir);
         
         JButton btnVoltar = new JButton("Voltar");
+        btnVoltar.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		dispose();
+        	}
+        });
         btnVoltar.setBounds(10, 637, 113, 23);
         contentPane.add(btnVoltar);
         

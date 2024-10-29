@@ -105,7 +105,7 @@ public class Estoque extends JFrame {
 		JButton btnVoltar = new JButton("Voltar");
 		btnVoltar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new MainPage().setVisible(true);
+				dispose();
 			}
 		});
 		btnVoltar.setFont(new Font("Arial", Font.PLAIN, 12));

@@ -100,7 +100,7 @@ public class Funcionario extends JFrame {
         btnVoltar.setBounds(10, 640, 150, 30);
         btnVoltar.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		new MainPage().setVisible(true);
+        		dispose();
         	}
         });
         btnVoltar.setFont(new Font("Arial", Font.PLAIN, 16));

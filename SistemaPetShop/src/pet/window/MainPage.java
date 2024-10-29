@@ -90,7 +90,7 @@ public class MainPage extends JFrame {
 		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Usuário");
 		mntmNewMenuItem_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-			new Usuario().setVisible(true);
+			new Usuarios().setVisible(true);
 			}
 		});
 		mnCadastrar.add(mntmNewMenuItem_1);

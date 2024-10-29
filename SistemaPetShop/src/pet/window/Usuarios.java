@@ -1,28 +1,26 @@
 package pet.window;
 
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import java.awt.Toolkit;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
 import java.awt.Font;
-import javax.swing.SwingConstants;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JButton;
-import javax.swing.ImageIcon;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.awt.event.ActionEvent;
 
-public class Usuario extends JFrame {
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+
+public class Usuarios extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
@@ -39,7 +37,7 @@ public class Usuario extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					Usuario frame = new Usuario();
+					Usuarios frame = new Usuarios();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -51,8 +49,8 @@ public class Usuario extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public Usuario() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(Usuario.class.getResource("/img/show.png")));
+	public Usuarios() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage(Usuarios.class.getResource("/img/show.png")));
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 800, 600);
 		contentPane = new JPanel();
@@ -127,12 +125,12 @@ public class Usuario extends JFrame {
 				registerUser();
 			}
 		});
-		btnCadastrar.setIcon(new ImageIcon(Usuario.class.getResource("/img/salvar.png")));
+		btnCadastrar.setIcon(new ImageIcon(Usuarios.class.getResource("/img/salvar.png")));
 		btnCadastrar.setBounds(249, 347, 134, 23);
 		contentPane.add(btnCadastrar);
 		
 		JButton btnLimpar = new JButton("Limpar");
-		btnLimpar.setIcon(new ImageIcon(Usuario.class.getResource("/img/remove.png")));
+		btnLimpar.setIcon(new ImageIcon(Usuarios.class.getResource("/img/remove.png")));
 		btnLimpar.setBounds(393, 347, 134, 23);
 		contentPane.add(btnLimpar);
 	}

@@ -264,7 +264,7 @@ public class Cliente extends JFrame {
 		JButton btnVoltar = new JButton("Voltar");
 		btnVoltar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				
+				dispose();
 			}
 		});
 		btnVoltar.setBounds(643, 603, 102, 32);

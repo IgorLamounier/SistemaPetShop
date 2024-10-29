@@ -98,6 +98,7 @@ public class MainPage extends JFrame {
 		JMenuItem mntmExit = new JMenuItem("Sair");
 		mntmExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				new Login().setVisible(true);
 				dispose();
 			}
 		});

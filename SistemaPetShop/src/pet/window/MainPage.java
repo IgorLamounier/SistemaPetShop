@@ -112,7 +112,7 @@ public class MainPage extends JFrame {
 		mntmCadastrarEstoque.setIcon(new ImageIcon(MainPage.class.getResource("/img/adiciona.png")));
 		mntmCadastrarEstoque.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new Estoque().setVisible(true);
+				new CadastrarEstoque().setVisible(true);
 			}
 		});
 		
@@ -124,6 +124,15 @@ public class MainPage extends JFrame {
 		});
 		mntmNewMenuItem_2.setIcon(new ImageIcon(MainPage.class.getResource("/img/shopping-cart.png")));
 		mnEstoque.add(mntmNewMenuItem_2);
+		
+		JMenuItem mntmNewMenuItem_3 = new JMenuItem("Estoque");
+		mntmNewMenuItem_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new Estoque().setVisible(true);
+			}
+		});
+		mntmNewMenuItem_3.setIcon(new ImageIcon(MainPage.class.getResource("/img/shopping-cart.png")));
+		mnEstoque.add(mntmNewMenuItem_3);
 		mnEstoque.add(mntmCadastrarEstoque);
 		
 		JMenu mnServicos = new JMenu("Serviços");

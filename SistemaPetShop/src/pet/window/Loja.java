@@ -10,9 +10,7 @@ import java.awt.event.MouseEvent;
 import java.util.HashMap;
 
 public class Loja extends JFrame {
-    /**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 1L;
 	private JTable tabelaProdutos;
     private DefaultTableModel modeloTabela;
@@ -32,9 +30,6 @@ public class Loja extends JFrame {
 
         String[] colunas = {"ID", "Nome", "Tipo", "Preço"};
         modeloTabela = new DefaultTableModel(colunas, 0) {
-            /**
-			 * 
-			 */
 			private static final long serialVersionUID = 1L;
 
 			public boolean isCellEditable(int row, int column) {
@@ -87,6 +82,15 @@ public class Loja extends JFrame {
             }
         });
         getContentPane().add(btnRemoverItem);
+        
+        JButton btnNewButton = new JButton("Voltar");
+        btnNewButton.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		dispose();
+        	}
+        });
+        btnNewButton.setBounds(10, 647, 89, 23);
+        getContentPane().add(btnNewButton);
 
         tabelaProdutos.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {

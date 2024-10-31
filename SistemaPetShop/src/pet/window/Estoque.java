@@ -101,7 +101,9 @@ public class Estoque extends JFrame {
         tableModel.addColumn("Quantidade");
         tableModel.addColumn("Marca");
         tableModel.addColumn("Fornecedor");
-        tableModel.addColumn("Validade");
+        tableModel.addColumn("Tipo");
+        tableModel.addColumn("Preço(Uni)");
+        tableModel.addColumn("Vencimento");
 
         loadUserData();
     }
@@ -124,7 +126,9 @@ public class Estoque extends JFrame {
                 row.add(resultado.getString("nome_produto"));
                 row.add(String.valueOf(resultado.getInt("quantidade")));
                 row.add(resultado.getString("marca"));
-                row.add(resultado.getString("fornecedor")); 
+                row.add(resultado.getString("fornecedor"));
+                row.add(resultado.getString("tipo"));
+                row.add(String.valueOf(resultado.getDouble("preco")));
                 row.add(String.valueOf(resultado.getInt("data_vencimento"))); 
                 tableModel.addRow(row);
             }
@@ -143,37 +147,33 @@ public class Estoque extends JFrame {
     }
 
     private void searchUsers(String keyword) {
-        Connection conexao = null;
-        try {
-            conexao = ConnectionFactory.createConnection();
-            String sql = "SELECT estoque_id, produto_id, nome_produto, quantidade, marca, fornecedor FROM estoque WHERE nome_produto LIKE ? OR produto_id LIKE ?";
-            PreparedStatement pst = conexao.prepareStatement(sql);
+        String sql = "SELECT nome_produto, quantidade, marca, fornecedor, tipo, preco, data_vencimento FROM estoque WHERE nome_produto LIKE ? OR tipo LIKE ?";
+        
+        try (Connection conexao = ConnectionFactory.createConnection();
+             PreparedStatement pst = conexao.prepareStatement(sql)) {
+
             pst.setString(1, "%" + keyword + "%");
             pst.setString(2, "%" + keyword + "%");
-            ResultSet rs = pst.executeQuery();
 
-            tableModel.setRowCount(0); // Limpa os dados da tabela antes de carregar novamente
-            while (rs.next()) {
-                Vector<String> row = new Vector<>();
-                row.add(rs.getString("estoque_id")); 
-                row.add(rs.getString("produto_id")); 
-                row.add(rs.getString("nome_produto")); 
-                row.add(rs.getString("quantidade")); 
-                row.add(rs.getString("marca")); 
-                row.add(rs.getString("fornecedor")); 
-                tableModel.addRow(row);
+            try (ResultSet rs = pst.executeQuery()) {
+                tableModel.setRowCount(0); // Limpa os dados da tabela antes de carregar novamente
+
+                while (rs.next()) {
+                    Vector<String> row = new Vector<>();
+                    row.add(rs.getString("nome_produto"));
+                    row.add(rs.getString("quantidade"));
+                    row.add(rs.getString("marca"));
+                    row.add(rs.getString("fornecedor"));
+                    row.add(rs.getString("tipo"));
+                    row.add(rs.getString("preco"));
+                    row.add(rs.getString("data_vencimento"));
+                    tableModel.addRow(row);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Erro ao buscar os dados: " + e.getMessage());
-        } finally {
-            if (conexao != null) {
-                try {
-                    conexao.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
+
 }

@@ -12,7 +12,11 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.DefaultListModel;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
+
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.awt.event.ActionEvent;
 import javax.swing.SwingConstants;
 import javax.swing.ImageIcon;
@@ -29,10 +33,10 @@ public class Servicos extends JFrame {
     private JTextField txtAgenda;
     private JTextField txtIdade;
     private JTextField txtRaca;
-    private JTextField txtPorte;
     private JTextField txtEspecie;
     private JTextField txtHora;
     private JComboBox<String> cmbServicos;
+    private JComboBox<String> cmbPorte;
     private DefaultListModel<String> listModel;
     private JList<String> listServicos;
 
@@ -126,25 +130,25 @@ public class Servicos extends JFrame {
         JLabel lblPet = new JLabel("Pet:");
         lblPet.setHorizontalAlignment(SwingConstants.RIGHT);
         lblPet.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 19));
-        lblPet.setBounds(0, 26, 121, 18);
+        lblPet.setBounds(0, 63, 121, 18);
         contentPane.add(lblPet);
         
         txtPet = new JTextField();
         txtPet.setFont(new Font("Arial", Font.PLAIN, 12));
         txtPet.setColumns(10);
-        txtPet.setBounds(131, 26, 341, 20);
+        txtPet.setBounds(131, 63, 341, 20);
         contentPane.add(txtPet);
         
         JLabel lblCliente = new JLabel("Cliente:");
         lblCliente.setHorizontalAlignment(SwingConstants.RIGHT);
         lblCliente.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 19));
-        lblCliente.setBounds(0, 65, 121, 18);
+        lblCliente.setBounds(0, 19, 121, 18);
         contentPane.add(lblCliente);
         
         txtCliente = new JTextField();
         txtCliente.setFont(new Font("Arial", Font.PLAIN, 12));
         txtCliente.setColumns(10);
-        txtCliente.setBounds(131, 63, 341, 20);
+        txtCliente.setBounds(131, 17, 341, 20);
         contentPane.add(txtCliente);
         
         JLabel lblDataAgendamento = new JLabel("Data Agendamento:");
@@ -160,10 +164,12 @@ public class Servicos extends JFrame {
 
        
         cmbServicos = new JComboBox<>();
-        cmbServicos.addItem("Tosa");
-        cmbServicos.addItem("Banho");
-        cmbServicos.addItem("Exames");
-        cmbServicos.addItem("Vacinação");
+        cmbServicos.addItem("Consulta Veterinária");
+        cmbServicos.addItem("Check-up Geral");
+        cmbServicos.addItem("Banho e Tosa");
+        cmbServicos.addItem("Atendimento Domiciliar");
+        cmbServicos.addItem("Treinamento e Adestramento");
+        cmbServicos.addItem("Hospedagem");
         
         cmbServicos.setBounds(160, 378, 200, 25);
         contentPane.add(cmbServicos);
@@ -217,11 +223,6 @@ public class Servicos extends JFrame {
         txtRaca.setBounds(131, 196, 175, 20);
         contentPane.add(txtRaca);
         
-        txtPorte = new JTextField();
-        txtPorte.setColumns(10);
-        txtPorte.setBounds(445, 196, 175, 20);
-        contentPane.add(txtPorte);
-        
         txtEspecie = new JTextField();
         txtEspecie.setColumns(10);
         txtEspecie.setBounds(445, 150, 175, 20);
@@ -247,6 +248,13 @@ public class Servicos extends JFrame {
         lblNewLabel.setBounds(0, 0, 1065, 681);
         contentPane.add(lblNewLabel);
         
+        cmbPorte = new JComboBox<String>();
+        cmbPorte.addItem("Pequeno");
+        cmbPorte.addItem("Médio");
+        cmbPorte.addItem("Grande");
+        cmbPorte.setBounds(447, 194, 173, 22);
+        contentPane.add(cmbPorte);
+        
 
     }
     
@@ -258,15 +266,47 @@ public class Servicos extends JFrame {
     	String idade = txtIdade.getText();
     	String raca = txtRaca.getText();
     	String especie = txtEspecie.getText();
-    	String porte = txtPorte.getText();
+    	String porte = cmbPorte.getSelectedItem().toString();
     	String data = txtAgenda.getText();
     	String hora = txtHora.getText();
     	String obs = txtObs.getText();
     	
-    	if(cliente.isEmpty() || pet.isEmpty() || servicos.isEmpty() || porte.isEmpty()) {
-    		
+    	if(cliente.isEmpty() || pet.isEmpty() || servicos.isEmpty() || porte.isEmpty() || data.isEmpty() || hora.isEmpty() || obs.isEmpty()) {
+    		JOptionPane.showMessageDialog(this, "Preencha os campos obrigatórios!", "Erro", JOptionPane.ERROR_MESSAGE);	
+    	}
+    	
+    	if (addServicoDatabase(cliente, pet, servicos, descricao, idade, raca, especie, porte, data, hora, obs)) {
+    		JOptionPane.showMessageDialog(this, "Agendamento cadastrado com sucesso!");
     	}
     	
     }
     
+    private boolean addServicoDatabase(String cliente, String pet, String servicos, String descricao, String idade, String raca, String especie, String porte, String data, String hora, String obs) {
+    	boolean sucess = false;
+    	
+    	try {
+    		Connection conexao = ConnectionFactory.createConnection();
+			String sql = "INSERT INTO agendamentos(cliente_id, pet_id, servico, descricao, idade, raca, especie, porte, data_agendamento, horario, observacao) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+			PreparedStatement cmd = conexao.prepareStatement(sql);
+			
+			cmd.setString(1, cliente);
+			cmd.setString(2, pet);
+			cmd.setString(3, servicos);
+			cmd.setString(4, descricao);
+			cmd.setString(5, idade);
+			cmd.setString(6, raca);
+			cmd.setString(7, especie);
+			cmd.setString(8, porte);
+			cmd.setString(9, data);
+			cmd.setString(10, hora);
+			cmd.setString(11, obs);
+			
+			int rowAffected = cmd.executeUpdate();
+			sucess = rowAffected > 0;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    	return sucess;
+    }
 }

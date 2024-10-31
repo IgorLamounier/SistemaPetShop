@@ -27,6 +27,8 @@ public class CadastrarEstoque extends JFrame {
 	private JTextField txtQuant;
 	private JTextField txtMarca;
 	private JTextField txtFornecedor;
+	private JTextField txtFab;
+	private JTextField txtVal;
 
 	/**
 	 * Launch the application.
@@ -101,19 +103,39 @@ public class CadastrarEstoque extends JFrame {
 		txtFornecedor.setBounds(436, 189, 153, 23);
 		contentPane.add(txtFornecedor);
 		
-		JLabel lblTipo = new JLabel("Tipo:");
+		JLabel lblTipo = new JLabel("Categoria:");
 		lblTipo.setFont(new Font("Arial", Font.PLAIN, 19));
-		lblTipo.setBounds(370, 227, 56, 23);
+		lblTipo.setBounds(332, 227, 94, 23);
 		contentPane.add(lblTipo);
+		
+		JLabel lblQuantidade_1_1 = new JLabel("Fab:");
+		lblQuantidade_1_1.setFont(new Font("Arial", Font.PLAIN, 19));
+		lblQuantidade_1_1.setBounds(388, 261, 38, 23);
+		contentPane.add(lblQuantidade_1_1);
+		
+		txtFab = new JTextField();
+		txtFab.setColumns(10);
+		txtFab.setBounds(436, 261, 153, 23);
+		contentPane.add(txtFab);
+		
+		JLabel lblQuantidade_1_2 = new JLabel("Val:");
+		lblQuantidade_1_2.setFont(new Font("Arial", Font.PLAIN, 19));
+		lblQuantidade_1_2.setBounds(388, 295, 38, 23);
+		contentPane.add(lblQuantidade_1_2);
+		
+		txtVal = new JTextField();
+		txtVal.setColumns(10);
+		txtVal.setBounds(436, 295, 153, 23);
+		contentPane.add(txtVal);
 		
 		JLabel lblPreco = new JLabel("Preço:");
 		lblPreco.setFont(new Font("Arial", Font.PLAIN, 19));
-		lblPreco.setBounds(370, 261, 56, 23);
+		lblPreco.setBounds(370, 329, 56, 23);
 		contentPane.add(lblPreco);
 		
 		txtPreco = new JTextField();
 		txtPreco.setColumns(10);
-		txtPreco.setBounds(436, 261, 153, 23);
+		txtPreco.setBounds(436, 329, 153, 23);
 		contentPane.add(txtPreco);
 		
 		JButton btnAdicionar = new JButton("Adicionar");
@@ -123,7 +145,7 @@ public class CadastrarEstoque extends JFrame {
 				registrarEstoque();
 			}
 		});
-		btnAdicionar.setBounds(469, 295, 89, 23);
+		btnAdicionar.setBounds(469, 363, 89, 23);
 		contentPane.add(btnAdicionar);
 		
 		cmbTipo = new JComboBox<>();
@@ -145,11 +167,12 @@ public class CadastrarEstoque extends JFrame {
 		btnVoltar.setBounds(10, 647, 89, 23);
 		contentPane.add(btnVoltar);
 		
+		
+		
 		JLabel lblFundo = new JLabel("");
 		lblFundo.setBounds(0, 0, 1064, 681);
 		lblFundo.setIcon(new ImageIcon(CadastrarEstoque.class.getResource("/img/Fundo2.png")));
 		contentPane.add(lblFundo);
-		
 
 	}
 	
@@ -157,30 +180,39 @@ public class CadastrarEstoque extends JFrame {
 		String nome = txtNome.getText();
 		String quantidade = txtQuant.getText();
 		String marca = txtMarca.getText();
+		String fornecedor = txtFornecedor.getText();
 		String tipo = cmbTipo.getSelectedItem().toString();
+		String fab = txtFab.getText();
+		String val = txtVal.getText();
 		String preco = txtPreco.getText();
 		
-		if(nome.isEmpty() || tipo.isEmpty() || preco.isEmpty()) {
-			JOptionPane.showMessageDialog(this, "Preencha todos os campos.");
+		if(nome.isEmpty() || quantidade.isEmpty() || marca.isEmpty() || fornecedor.isEmpty() || 
+				tipo.isEmpty() || preco.isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Preencha todos os campos obrigatórios.");
 		}
 		
-		if(addEstoqueDatabase(nome, tipo, preco)) {
+		if(addEstoqueDatabase(nome, quantidade, marca, fornecedor, tipo, fab, val, preco)) {
 			JOptionPane.showMessageDialog(this, "Produto cadastrado com sucesso!");
 		}
 		
 	}
 	
-	private boolean addEstoqueDatabase(String nome, String tipo, String preco) {
+	private boolean addEstoqueDatabase(String nome, String quantidade, String marca, String fornecedor, String tipo, String fab, String val, String preco) {
 		boolean sucess = false;
 		
 		try {
 			Connection conexao = ConnectionFactory.createConnection();
-			String sql = "insert into produtos (nome, tipo, preco) values (?, ?, ?);";
+			String sql = "INSERT INTO estoque(nome_produto, quantidade, marca, fornecedor, tipo, data_fabricacao, data_vencimento, preco) VALUES (?,?,?,?,?,?,?,?);";
 			PreparedStatement cmd = conexao.prepareStatement(sql);
 			
 			cmd.setString(1, nome);
-			cmd.setString(2, tipo);
-			cmd.setString(3, preco);
+			cmd.setString(2, quantidade);
+			cmd.setString(3, marca);
+			cmd.setString(4, fornecedor);
+			cmd.setString(5, tipo);
+			cmd.setString(6, fab);
+			cmd.setString(7, val);
+			cmd.setString(8, preco);
 			
 			int rowAffected = cmd.executeUpdate();
 			sucess = rowAffected > 0; 

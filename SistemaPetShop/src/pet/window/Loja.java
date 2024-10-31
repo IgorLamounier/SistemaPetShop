@@ -161,6 +161,7 @@ public class Loja extends JFrame {
             lblTotal.setText("Total: R$ 0.00"); 
             quantidades.clear(); 
         }
+        
     }
 
     private void removerItemSelecionado() {

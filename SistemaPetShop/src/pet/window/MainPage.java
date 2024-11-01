@@ -90,6 +90,16 @@ public class MainPage extends JFrame {
                 dispose();
             }
         });
+        
+                // New "Animais" Menu Item
+                JMenuItem mntmAnimais = new JMenuItem("Animais");
+                mnCadastrar.add(mntmAnimais);
+                mntmAnimais.addActionListener(new ActionListener() {
+                    public void actionPerformed(ActionEvent e) {
+                        new Animais().setVisible(true);
+                        dispose(); // Optionally close the current frame
+                    }
+                });
         mnCadastrar.add(mntmNewMenuItem_1);
 
         JMenuItem mntmExit = new JMenuItem("Sair");
@@ -110,7 +120,6 @@ public class MainPage extends JFrame {
         mntmCadastrarEstoque.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 new CadastrarEstoque().setVisible(true);
-                dispose();
             }
         });
         mnEstoque.add(mntmCadastrarEstoque);
@@ -124,17 +133,7 @@ public class MainPage extends JFrame {
         mntmNewMenuItem_2.setIcon(new ImageIcon(MainPage.class.getResource("/img/shopping-cart.png")));
         mnEstoque.add(mntmNewMenuItem_2);
 
-        // New "Animais" Menu Item
-        JMenuItem mntmAnimais = new JMenuItem("Animais");
-        mntmAnimais.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                new Animais().setVisible(true);
-                dispose(); // Optionally close the current frame
-            }
-        });
-        mnEstoque.add(mntmAnimais);
-
-        JMenu mnServicos = new JMenu("Serviços");
+        JMenu mnServicos = new JMenu("Agendamentos");
         mnServicos.setIcon(new ImageIcon("F:\\Codes\\Java\\SistemaPetShop\\src\\img\\Serviços.png"));
         menuBar.add(mnServicos);
 

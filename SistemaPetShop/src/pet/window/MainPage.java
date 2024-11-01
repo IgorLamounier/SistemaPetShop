@@ -85,6 +85,9 @@ public class MainPage extends JFrame {
 				new Cliente().setVisible(true);
 			}
 		});
+		
+		JMenuItem menuItem = new JMenuItem("New menu item");
+		mnCadastrar.add(menuItem);
 		mnCadastrar.add(mntmCliente);
 		
 		JMenuItem mntmNewMenuItem_1 = new JMenuItem("Usuário");
@@ -102,6 +105,21 @@ public class MainPage extends JFrame {
 				dispose();
 			}
 		});
+		
+		JMenu mnNewMenu = new JMenu("Listar");
+		mnNewMenu.setIcon(new ImageIcon(MainPage.class.getResource("/img/Serviços.png")));
+		mnUsuario.add(mnNewMenu);
+		
+		JMenuItem mntmNewMenuItem_4 = new JMenuItem("Funcionários");
+		mntmNewMenuItem_4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new FuncList().setVisible(true);
+			}
+		});
+		mnNewMenu.add(mntmNewMenuItem_4);
+		
+		JMenuItem mntmNewMenuItem_5 = new JMenuItem("Clientes");
+		mnNewMenu.add(mntmNewMenuItem_5);
 		mnUsuario.add(mntmExit);
 		
 		JMenu mnEstoque = new JMenu("Loja");

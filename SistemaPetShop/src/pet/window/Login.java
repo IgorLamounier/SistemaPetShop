@@ -96,10 +96,10 @@ public class Login extends JFrame {
 		btnNewButton.setBounds(249, 280, 89, 23);
 		contentPane.add(btnNewButton);
 		
-		lblNewLabel = new JLabel("Pet Shop");
+		lblNewLabel = new JLabel("Pet Space");
 		lblNewLabel.setFont(new Font("Arial", Font.BOLD, 35));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(213, 11, 150, 69);
+		lblNewLabel.setBounds(213, 11, 173, 69);
 		contentPane.add(lblNewLabel);
 		
 		lblFundo = new JLabel("");

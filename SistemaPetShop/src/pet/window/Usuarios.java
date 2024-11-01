@@ -57,6 +57,7 @@ public class Usuarios extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
+		
 		JLabel lblUsername = new JLabel("UserName:");
 		lblUsername.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblUsername.setFont(new Font("Arial", Font.PLAIN, 12));
@@ -102,7 +103,24 @@ public class Usuarios extends JFrame {
 		JButton btnLimpar = new JButton("Limpar");
 		btnLimpar.setIcon(new ImageIcon(Usuarios.class.getResource("/img/remove.png")));
 		btnLimpar.setBounds(393, 347, 134, 23);
+		btnLimpar.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        // Limpa os campos
+		        txtUsername.setText("");
+		        pswSenha.setText("");
+		        pswConfSenha.setText("");
+		    }
+		});
 		contentPane.add(btnLimpar);
+
+		
+		JButton btnNewButton = new JButton("Voltar");
+		btnNewButton.setBounds(57, 490, 89, 23);
+		contentPane.add(btnNewButton);
+		btnNewButton.addActionListener(e -> {
+            new MainPage().setVisible(true);
+            dispose(); // Fecha a janela atual
+        });
 	}
 	
 	private void registerUser() {
@@ -148,7 +166,6 @@ public class Usuarios extends JFrame {
 		}
 		return sucess;
 	}
-	
 }
 //ALTER TABLE `users` ADD UNIQUE(`username`);
 

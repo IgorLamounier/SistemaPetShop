@@ -15,6 +15,7 @@ public class Funcionario extends JFrame {
     private JTextField txtEndereco;
     private JTextField txtTelefone;
     private JTextField txtEmail;
+    private JPanel contentPane;
     private JButton btnCadastrar;
     private JComboBox<String> cmbCargo;
     private JTextField txtData;
@@ -34,6 +35,7 @@ public class Funcionario extends JFrame {
         setSize(1080, 720);
         setResizable(false);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setResizable(false);
 
         Font font = new Font("Arial", Font.PLAIN, 16);
 
@@ -104,12 +106,26 @@ public class Funcionario extends JFrame {
         JButton btnLimpar = new JButton("Limpar");
         btnLimpar.setBounds(372, 317, 150, 30);
         btnLimpar.setFont(new Font("Arial", Font.PLAIN, 16));
+        btnLimpar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Limpa os campos
+                txtNome.setText("");
+                txtCPF.setText("");
+                txtEndereco.setText("");
+                txtTelefone.setText("");
+                txtEmail.setText("");
+                txtData.setText("");
+                cmbCargo.setSelectedIndex(0); // Reseta o combo box para o primeiro item
+            }
+        });
         getContentPane().add(btnLimpar);
+
         
         JButton btnVoltar = new JButton("Voltar");
         btnVoltar.setBounds(10, 640, 150, 30);
         btnVoltar.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
+        		new MainPage().setVisible(true);
         		dispose();
         	}
         });

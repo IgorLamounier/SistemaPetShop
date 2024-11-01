@@ -61,6 +61,7 @@ public class Login extends JFrame {
 		setBounds(100, 100, 600, 475);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setResizable(false);
 
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
@@ -96,10 +97,10 @@ public class Login extends JFrame {
 		btnNewButton.setBounds(249, 280, 89, 23);
 		contentPane.add(btnNewButton);
 		
-		lblNewLabel = new JLabel("Pet Space");
+		lblNewLabel = new JLabel("Pet Shop");
 		lblNewLabel.setFont(new Font("Arial", Font.BOLD, 35));
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setBounds(213, 11, 173, 69);
+		lblNewLabel.setBounds(213, 11, 150, 69);
 		contentPane.add(lblNewLabel);
 		
 		lblFundo = new JLabel("");

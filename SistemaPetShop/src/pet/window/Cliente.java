@@ -53,6 +53,7 @@ public class Cliente extends JFrame {
 		setBounds(100, 100, 1080, 720);
 		Pane = new JPanel();
 		Pane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setResizable(false);
 
 		setContentPane(Pane);
 		Pane.setLayout(null);
@@ -142,11 +143,24 @@ public class Cliente extends JFrame {
 		JButton btnLimpar = new JButton("Limpar");
 		btnLimpar.setBounds(755, 603, 102, 32);
 		btnLimpar.setFont(new Font("Arial", Font.PLAIN, 15));
+		btnLimpar.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        // Limpa os campos
+		        txtNome.setText("");
+		        txtTelefone.setText("");
+		        txtCPF.setText("");
+		        txtEndereco.setText("");
+		        txtEmail.setText("");
+		        txtObs.setText("");
+		    }
+		});
 		Pane.add(btnLimpar);
+
 		
 		JButton btnVoltar = new JButton("Voltar");
 		btnVoltar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				new MainPage().setVisible(true);
 				dispose();
 			}
 		});

@@ -59,6 +59,7 @@ public class Animais extends JFrame {
 		setBounds(100, 100, 1080, 720);
 		Pane = new JPanel();
 		Pane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setResizable(false);
 
 		setContentPane(Pane);
 		Pane.setLayout(null);
@@ -182,12 +183,29 @@ public class Animais extends JFrame {
 		JButton btnLimpar = new JButton("Limpar");
 		btnLimpar.setBounds(755, 603, 102, 32);
 		btnLimpar.setFont(new Font("Arial", Font.PLAIN, 15));
+		btnLimpar.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        // Limpa os campos
+		        txtNomeCli.setText("");
+		        txtNomeAni.setText("");
+		        txtEspecie.setText("");
+		        txtRaca.setText("");
+		        txtPeso.setText("");
+		        txtIdade.setText("");
+		        txtPelo.setText("");
+		        txtSexo.setText("");
+		        txtPorte.setText("");
+		        txtObsAni.setText("");
+		    }
+		});
 		Pane.add(btnLimpar);
+
 		
 		JButton btnVoltar = new JButton("Voltar");
 		btnVoltar.setBounds(643, 603, 102, 32);
 		btnVoltar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				new MainPage().setVisible(true);
 				dispose();
 			}
 		});

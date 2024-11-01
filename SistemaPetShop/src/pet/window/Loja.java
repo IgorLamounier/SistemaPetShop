@@ -5,100 +5,111 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.Vector;
 
 public class Loja extends JFrame {
-	
-	private static final long serialVersionUID = 1L;
-	private JTable tabelaProdutos;
+
+    private static final long serialVersionUID = 1L;
+    private JPanel contentPane;
+    private JTable tabelaProdutos;
     private DefaultTableModel modeloTabela;
     private JLabel lblTotal;
     private JButton btnComprar;
-    private JPanel panelResult;
-    private JButton btnRemoverItem;
     private DefaultListModel<String> listModel;
-    private JList<String> listSelecionados; 
-    private HashMap<Integer, Integer> quantidades; 
+    private JList<String> listSelecionados;
+    private HashMap<Integer, Integer> quantidades;
+
+    public static void main(String[] args) {
+        EventQueue.invokeLater(() -> {
+            try {
+                Loja frame = new Loja();
+                frame.setVisible(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
 
     public Loja() {
         setTitle("Sistema de Venda");
-        setSize(1080, 720);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        getContentPane().setLayout(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setBounds(100, 100, 1080, 720);
+        contentPane = new JPanel();
+        contentPane.setLayout(null);
+        setContentPane(contentPane);
+        setResizable(false);
 
-        String[] colunas = {"ID", "Nome", "Tipo", "Preço"};
-        modeloTabela = new DefaultTableModel(colunas, 0) {
-			private static final long serialVersionUID = 1L;
+        JLabel lblProdutos = new JLabel("Produtos");
+        lblProdutos.setFont(new Font("Arial Rounded MT Bold", Font.PLAIN, 27));
+        lblProdutos.setBounds(30, 33, 184, 55);
+        contentPane.add(lblProdutos);
 
-			public boolean isCellEditable(int row, int column) {
-                return false;
+        modeloTabela = new DefaultTableModel() {
+            public boolean isCellEditable(int row, int column) {
+                return false; // Impede edição das células
             }
         };
+        modeloTabela.addColumn("Produto ID");
+        modeloTabela.addColumn("Nome");
+        modeloTabela.addColumn("Tipo");
+        modeloTabela.addColumn("Preço");
+
         tabelaProdutos = new JTable(modeloTabela);
-
-        quantidades = new HashMap<>();
-
-        adicionarProdutos();
-
         JScrollPane scrollPane = new JScrollPane(tabelaProdutos);
-        scrollPane.setBounds(30, 30, 1020, 500);
-        getContentPane().add(scrollPane);
+        scrollPane.setBounds(40, 99, 989, 472);
+        contentPane.add(scrollPane);
 
         lblTotal = new JLabel("Total: R$ 0.00");
-        lblTotal.setBounds(729, 541, 200, 30);
-        getContentPane().add(lblTotal);
+        lblTotal.setBounds(729, 583, 200, 30);
+        contentPane.add(lblTotal);
 
         btnComprar = new JButton("Comprar");
-        btnComprar.setBounds(729, 571, 100, 30);
+        btnComprar.setBounds(729, 613, 100, 30);
         btnComprar.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 double total = calcularTotal();
-                if (total > 0) { 
+                if (total > 0) {
                     mostrarOpcaoPagamento(total);
                 } else {
                     JOptionPane.showMessageDialog(Loja.this, "Nenhum produto selecionado!", "Erro", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
-        getContentPane().add(btnComprar);
-        
-        panelResult = new JPanel();
-        panelResult.setBounds(388, 549, 331, 93);
-        panelResult.setLayout(new BorderLayout()); 
-        getContentPane().add(panelResult);
-        
+        contentPane.add(btnComprar);
+
+        JButton btnVoltar = new JButton("Voltar");
+        btnVoltar.setBounds(40, 613, 100, 30);
+        btnVoltar.addActionListener(e -> {
+            dispose(); // Fecha a janela atual
+        });
+        contentPane.add(btnVoltar);
+
         listModel = new DefaultListModel<>();
         listSelecionados = new JList<>(listModel);
         JScrollPane listScrollPane = new JScrollPane(listSelecionados);
-        panelResult.add(listScrollPane, BorderLayout.CENTER);
-        
-        btnRemoverItem = new JButton("Remover Item");
-        btnRemoverItem.setBounds(729, 612, 118, 30);
-        btnRemoverItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                removerItemSelecionado();
-            }
-        });
-        getContentPane().add(btnRemoverItem);
-        
-        JButton btnNewButton = new JButton("Voltar");
-        btnNewButton.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		dispose();
-        	}
-        });
-        btnNewButton.setBounds(10, 647, 89, 23);
-        getContentPane().add(btnNewButton);
+        listScrollPane.setBounds(388, 585, 331, 93);
+        contentPane.add(listScrollPane);
 
-        tabelaProdutos.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
+        JButton btnRemoverItem = new JButton("Remover Item");
+        btnRemoverItem.setBounds(850, 613, 130, 30);
+        btnRemoverItem.addActionListener(e -> removerItemSelecionado());
+        contentPane.add(btnRemoverItem);
+
+        quantidades = new HashMap<>();
+        loadProdutos(); // Carrega produtos do banco de dados
+
+        tabelaProdutos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent e) {
                 int row = tabelaProdutos.getSelectedRow();
-                if (row != -1) { 
-                    int id = (Integer) modeloTabela.getValueAt(row, 0);
+                if (row != -1) {
+                    int id = Integer.parseInt((String) modeloTabela.getValueAt(row, 0)); // Converte para Integer
                     String nome = (String) modeloTabela.getValueAt(row, 1);
-                    double preco = (Double) modeloTabela.getValueAt(row, 3);
+                    double preco = Double.parseDouble((String) modeloTabela.getValueAt(row, 3)); // Converte para double
 
                     quantidades.put(id, quantidades.getOrDefault(id, 0) + 1);
                     atualizarLista();
@@ -108,11 +119,35 @@ public class Loja extends JFrame {
         });
     }
 
-    private void adicionarProdutos() {
-        modeloTabela.addRow(new Object[]{1, "Produto 1", "Tipo A", 10.00});
-        modeloTabela.addRow(new Object[]{2, "Produto 2", "Tipo B", 20.00});
-        modeloTabela.addRow(new Object[]{3, "Produto 3", "Tipo A", 30.00});
-        modeloTabela.addRow(new Object[]{4, "Produto 4", "Tipo C", 40.00});
+    private void loadProdutos() {
+        Connection conexao = null;
+        try {
+            conexao = ConnectionFactory.createConnection(); // Método para obter conexão ao banco
+            String sql = "SELECT * FROM produtos"; // Sua tabela de produtos
+            PreparedStatement cmd = conexao.prepareStatement(sql);
+            ResultSet resultado = cmd.executeQuery();
+            modeloTabela.setRowCount(0); // Limpa a tabela antes de carregar
+
+            while (resultado.next()) {
+                Vector<String> row = new Vector<>();
+                row.add(resultado.getString("produto_id")); // Alterado para produto_id
+                row.add(resultado.getString("nome"));
+                row.add(resultado.getString("tipo"));
+                row.add(resultado.getString("preco"));
+                modeloTabela.addRow(row);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro ao carregar produtos: " + e.getMessage());
+        } finally {
+            if (conexao != null) {
+                try {
+                    conexao.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     private double calcularTotal() {
@@ -120,7 +155,7 @@ public class Loja extends JFrame {
         listModel.clear();
         for (int id : quantidades.keySet()) {
             String nome = (String) modeloTabela.getValueAt(id - 1, 1);
-            double preco = (Double) modeloTabela.getValueAt(id - 1, 3);
+            double preco = Double.parseDouble((String) modeloTabela.getValueAt(id - 1, 3));
             int quantidade = quantidades.get(id);
             total += preco * quantidade;
             listModel.addElement(nome + " - R$ " + preco + " (Qtd: " + quantidade + ")");
@@ -133,7 +168,7 @@ public class Loja extends JFrame {
         listModel.clear();
         for (int id : quantidades.keySet()) {
             String nome = (String) modeloTabela.getValueAt(id - 1, 1);
-            double preco = (Double) modeloTabela.getValueAt(id - 1, 3);
+            double preco = Double.parseDouble((String) modeloTabela.getValueAt(id - 1, 3));
             int quantidade = quantidades.get(id);
             listModel.addElement(nome + " - R$ " + preco + " (Qtd: " + quantidade + ")");
         }
@@ -142,7 +177,7 @@ public class Loja extends JFrame {
     private void mostrarOpcaoPagamento(double total) {
         Object[] options = {"Crédito", "Débito", "PIX"};
         String message = String.format("Valor da compra: R$ %.2f\nEscolha a forma de pagamento:", total);
-        
+
         int escolha = JOptionPane.showOptionDialog(
             this,
             message,
@@ -154,14 +189,13 @@ public class Loja extends JFrame {
             options[0]
         );
 
-        if (escolha != -1) { 
+        if (escolha != -1) {
             String metodoPagamento = options[escolha].toString();
             JOptionPane.showMessageDialog(this, "Pagamento realizado com sucesso via " + metodoPagamento);
-            listModel.clear(); 
-            lblTotal.setText("Total: R$ 0.00"); 
-            quantidades.clear(); 
+            listModel.clear();
+            lblTotal.setText("Total: R$ 0.00");
+            quantidades.clear();
         }
-        
     }
 
     private void removerItemSelecionado() {
@@ -175,7 +209,7 @@ public class Loja extends JFrame {
             int id = -1;
             for (int j = 0; j < modeloTabela.getRowCount(); j++) {
                 if (modeloTabela.getValueAt(j, 1).equals(nome)) {
-                    id = (Integer) modeloTabela.getValueAt(j, 0);
+                    id = Integer.parseInt((String) modeloTabela.getValueAt(j, 0)); // Converte para Integer
                     break;
                 }
             }
@@ -190,14 +224,7 @@ public class Loja extends JFrame {
                 }
             }
         }
-        atualizarLista(); 
-        calcularTotal(); 
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            Loja sistemaVenda = new Loja();
-            sistemaVenda.setVisible(true);
-        });
+        atualizarLista();
+        calcularTotal();
     }
 }

@@ -47,14 +47,15 @@ public class Estoque extends JFrame {
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         setContentPane(contentPane);
         contentPane.setLayout(null);
+        setResizable(false);
 
         textBarraPesquisa = new JTextField();
-        textBarraPesquisa.setBounds(575, 632, 211, 20);
+        textBarraPesquisa.setBounds(476, 632, 211, 20);
         contentPane.add(textBarraPesquisa);
         textBarraPesquisa.setColumns(10);
 
         JButton btnBuscar = new JButton("Buscar");
-        btnBuscar.setBounds(796, 631, 89, 23);
+        btnBuscar.setBounds(697, 631, 89, 23);
         contentPane.add(btnBuscar);
         btnBuscar.addActionListener(new ActionListener() {
             @Override
@@ -67,7 +68,8 @@ public class Estoque extends JFrame {
         JButton btnVoltar = new JButton("Voltar");
         btnVoltar.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		dispose();
+        		new MainPage().setVisible(true);
+				dispose();
         	}
         });
         btnVoltar.setBounds(52, 631, 89, 23);
@@ -95,15 +97,38 @@ public class Estoque extends JFrame {
         });
         btnCadsProdut.setBounds(895, 631, 141, 23);
         contentPane.add(btnCadsProdut);
+        
+        JButton btnNewButton = new JButton("Excluir");
+        btnNewButton.setBounds(796, 631, 89, 23);
+        contentPane.add(btnNewButton);
+        btnNewButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = table.getSelectedRow(); // Captura a linha selecionada
+
+                if (selectedRow != -1) { // Verifica se alguma linha está selecionada
+                    String nomeProduto = (String) tableModel.getValueAt(selectedRow, 0); // Captura o nome do produto
+                    int resposta = JOptionPane.showConfirmDialog(null, 
+                        "Tem certeza que deseja excluir o produto: " + nomeProduto + "?", 
+                        "Confirmação de Exclusão", 
+                        JOptionPane.YES_NO_OPTION);
+
+                    if (resposta == JOptionPane.YES_OPTION) {
+                        deleteProduct(nomeProduto); // Chama o método de exclusão
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Por favor, selecione um produto para excluir.");
+                }
+            }
+        });
+
+
 
         // Define as colunas da tabela
         tableModel.addColumn("Nome produto");
         tableModel.addColumn("Quantidade");
         tableModel.addColumn("Marca");
         tableModel.addColumn("Fornecedor");
-        tableModel.addColumn("Tipo");
-        tableModel.addColumn("Preço(Uni)");
-        tableModel.addColumn("Vencimento");
+        tableModel.addColumn("Validade");
 
         loadUserData();
     }
@@ -126,9 +151,7 @@ public class Estoque extends JFrame {
                 row.add(resultado.getString("nome_produto"));
                 row.add(String.valueOf(resultado.getInt("quantidade")));
                 row.add(resultado.getString("marca"));
-                row.add(resultado.getString("fornecedor"));
-                row.add(resultado.getString("tipo"));
-                row.add(String.valueOf(resultado.getDouble("preco")));
+                row.add(resultado.getString("fornecedor")); 
                 row.add(String.valueOf(resultado.getInt("data_vencimento"))); 
                 tableModel.addRow(row);
             }
@@ -147,32 +170,66 @@ public class Estoque extends JFrame {
     }
 
     private void searchUsers(String keyword) {
-        String sql = "SELECT nome_produto, quantidade, marca, fornecedor, tipo, preco, data_vencimento FROM estoque WHERE nome_produto LIKE ? OR tipo LIKE ?";
-        
-        try (Connection conexao = ConnectionFactory.createConnection();
-             PreparedStatement pst = conexao.prepareStatement(sql)) {
-
+        Connection conexao = null;
+        try {
+            conexao = ConnectionFactory.createConnection();
+            String sql = "SELECT estoque_id, produto_id, nome_produto, quantidade, marca, fornecedor FROM estoque WHERE nome_produto LIKE ? OR produto_id LIKE ?";
+            PreparedStatement pst = conexao.prepareStatement(sql);
             pst.setString(1, "%" + keyword + "%");
             pst.setString(2, "%" + keyword + "%");
+            ResultSet rs = pst.executeQuery();
 
-            try (ResultSet rs = pst.executeQuery()) {
-                tableModel.setRowCount(0); // Limpa os dados da tabela antes de carregar novamente
-
-                while (rs.next()) {
-                    Vector<String> row = new Vector<>();
-                    row.add(rs.getString("nome_produto"));
-                    row.add(rs.getString("quantidade"));
-                    row.add(rs.getString("marca"));
-                    row.add(rs.getString("fornecedor"));
-                    row.add(rs.getString("tipo"));
-                    row.add(rs.getString("preco"));
-                    row.add(rs.getString("data_vencimento"));
-                    tableModel.addRow(row);
-                }
+            tableModel.setRowCount(0); // Limpa os dados da tabela antes de carregar novamente
+            while (rs.next()) {
+                Vector<String> row = new Vector<>();
+                row.add(rs.getString("estoque_id")); 
+                row.add(rs.getString("produto_id")); 
+                row.add(rs.getString("nome_produto")); 
+                row.add(rs.getString("quantidade")); 
+                row.add(rs.getString("marca")); 
+                row.add(rs.getString("fornecedor")); 
+                tableModel.addRow(row);
             }
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Erro ao buscar os dados: " + e.getMessage());
+        } finally {
+            if (conexao != null) {
+                try {
+                    conexao.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    
+    private void deleteProduct(String nomeProduto) {
+        Connection conexao = null;
+        try {
+            conexao = ConnectionFactory.createConnection();
+            String sql = "DELETE FROM estoque WHERE nome_produto = ?";
+            PreparedStatement pst = conexao.prepareStatement(sql);
+            pst.setString(1, nomeProduto);
+            int rowsAffected = pst.executeUpdate(); // Executa a exclusão
+
+            if (rowsAffected > 0) {
+                JOptionPane.showMessageDialog(this, "Produto excluído com sucesso!");
+                loadUserData(); // Recarrega os dados da tabela
+            } else {
+                JOptionPane.showMessageDialog(this, "Produto não encontrado.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Erro ao excluir o produto: " + e.getMessage());
+        } finally {
+            if (conexao != null) {
+                try {
+                    conexao.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

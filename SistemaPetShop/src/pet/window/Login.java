@@ -103,10 +103,21 @@ public class Login extends JFrame {
 		lblNewLabel.setBounds(213, 11, 150, 69);
 		contentPane.add(lblNewLabel);
 		
+		JButton btnExit = new JButton("Sair");
+		btnExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
+		btnExit.setBounds(249, 314, 89, 23);
+		contentPane.add(btnExit);
+		
 		lblFundo = new JLabel("");
 		lblFundo.setIcon(new ImageIcon(Login.class.getResource("/img/Cream Brown And Orange Illustration Event Birthday Presentation 2.png")));
 		lblFundo.setBounds(0, 0, 584, 436);
 		contentPane.add(lblFundo);
+		
+
 		
 		
 	}
@@ -153,5 +164,4 @@ public class Login extends JFrame {
 		return isValid;
 		
 	}
-	
 }
